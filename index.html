@@ -1319,7 +1319,7 @@
       const grid = document.getElementById('sessionGrid');
       const comingSoon = [
         { id: 11, title: '👍', subtitle: 'A meditation for the reply that says everything and nothing' },
-        { id: 12, title: '"Sorry, Just Saw This"', subtitle: 'A meditation on the lie we all agree to believe' }
+        { id: 12, title: 'Sorry, Just Saw This', subtitle: 'A meditation on the lie we all agree to believe' }
       ];
 
       const comingSoonIds = new Set(comingSoon.map(s => s.id));
@@ -1425,7 +1425,6 @@
           playBtn.innerHTML = pauseSvg;
           playBtn.disabled = false;
           isPlaying = true;
-          if (window.goatcounter) goatcounter.count({ path: 'listen/' + session.id, title: session.title, event: true });
         }).catch(() => {
           playBtn.innerHTML = playSvg;
           playBtn.disabled = false;
@@ -1461,7 +1460,6 @@
         currentAudio.play().then(() => {
           playBtn.innerHTML = pauseSvg;
           isPlaying = true;
-          if (window.goatcounter) goatcounter.count({ path: 'listen/' + session.id, title: session.title, event: true });
         }).catch(() => {
           playBtn.innerHTML = playSvg;
           isPlaying = false;
