@@ -1404,7 +1404,7 @@
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      if (session.voice && autoPlay) {
+      if (session.voice) {
         mixer.onProgress = (t, total) => {
           document.getElementById('progressFill').style.width = (t / total * 100) + '%';
           document.getElementById('timeCurrent').textContent = formatTime(t);
@@ -1417,20 +1417,22 @@
           document.getElementById('playerNextBtn').classList.add('visible');
         };
 
-        playBtn.innerHTML = loadingSvg;
-        playBtn.disabled = true;
+        if (autoPlay) {
+          playBtn.innerHTML = loadingSvg;
+          playBtn.disabled = true;
 
-        mixer.start(session.voice).then((totalDuration) => {
-          document.getElementById('timeDuration').textContent = formatTime(totalDuration);
-          playBtn.innerHTML = pauseSvg;
-          playBtn.disabled = false;
-          isPlaying = true;
-        }).catch(() => {
-          playBtn.innerHTML = playSvg;
-          playBtn.disabled = false;
-          isPlaying = false;
-          showToast('Audio not yet available. Check back soon — or just breathe.');
-        });
+          mixer.start(session.voice).then((totalDuration) => {
+            document.getElementById('timeDuration').textContent = formatTime(totalDuration);
+            playBtn.innerHTML = pauseSvg;
+            playBtn.disabled = false;
+            isPlaying = true;
+          }).catch(() => {
+            playBtn.innerHTML = playSvg;
+            playBtn.disabled = false;
+            isPlaying = false;
+            showToast('Audio not yet available. Check back soon — or just breathe.');
+          });
+        }
       } else {
         currentAudio = new Audio(session.audio);
 
@@ -1490,6 +1492,22 @@
 
     function togglePlay() {
       const playBtn = document.getElementById('playerPlayBtn');
+
+      if (!mixer.active && !currentAudio && currentSession && currentSession.voice) {
+        playBtn.innerHTML = loadingSvg;
+        playBtn.disabled = true;
+        mixer.start(currentSession.voice).then((totalDuration) => {
+          document.getElementById('timeDuration').textContent = formatTime(totalDuration);
+          playBtn.innerHTML = pauseSvg;
+          playBtn.disabled = false;
+          isPlaying = true;
+        }).catch(() => {
+          playBtn.innerHTML = playSvg;
+          playBtn.disabled = false;
+          showToast('Audio not yet available. Check back soon — or just breathe.');
+        });
+        return;
+      }
 
       if (mixer.active) {
         if (isPlaying) {
