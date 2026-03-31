@@ -1377,7 +1377,7 @@
       });
     }
 
-    function openPlayer(session) {
+    function openPlayer(session, autoPlay = true) {
       currentSession = session;
       if (window.goatcounter) goatcounter.count({ path: 'play/' + session.id, title: session.title, event: true });
       history.replaceState(null, '', '#session-' + session.id);
@@ -1404,7 +1404,7 @@
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      if (session.voice) {
+      if (session.voice && autoPlay) {
         mixer.onProgress = (t, total) => {
           document.getElementById('progressFill').style.width = (t / total * 100) + '%';
           document.getElementById('timeCurrent').textContent = formatTime(t);
@@ -1627,7 +1627,7 @@
     const hashMatch = window.location.hash.match(/^#session-(\d+)$/);
     if (hashMatch) {
       const session = SESSIONS.find(s => s.id === parseInt(hashMatch[1], 10));
-      if (session) openPlayer(session);
+      if (session) openPlayer(session, false);
     }
   </script>
   <script data-goatcounter="https://sigh.goatcounter.com/count"
