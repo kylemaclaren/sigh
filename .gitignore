@@ -4,3 +4,4 @@ package.json
 package-lock.json
 og-template.html
 generate-og.js
+*.pdf
