@@ -362,6 +362,18 @@
       margin-left: 8px;
     }
 
+    .new-badge {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-rose);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid rgba(240, 160, 176, 0.3);
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-left: 8px;
+    }
+
     /* ── Player Overlay ── */
 
     .player-overlay {
@@ -971,7 +983,7 @@
 
     <!-- Footer -->
     <footer>
-      <p class="disclaimer">Sigh is not a substitute for actual therapy. Happy April Fools' Day.</p>
+      <p class="disclaimer">Sigh is not a substitute for actual therapy. But it is a substitute for reading your Slack messages.</p>
       <p>&copy; 2026 Sigh Inc. All rights reserved.</p>
     </footer>
   </div>
@@ -1105,6 +1117,24 @@
         voice: 'https://storage.googleapis.com/sigh-audio/session-10.mp3',
         shareQuote: 'This is not a rejection of you. This is a rejection of time itself. Tuesday did nothing wrong. Wednesday was innocent. Thursday was just trying to help.',
         icon: '<svg viewBox="0 0 40 40" fill="none" stroke="var(--accent-lavender)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="28" height="28" rx="3"/><line x1="6" y1="14" x2="34" y2="14"/><line x1="14" y1="6" x2="14" y2="10"/><line x1="26" y1="6" x2="26" y2="10"/><line x1="14" y1="20" x2="18" y2="24"/><line x1="18" y1="20" x2="14" y2="24"/><line x1="22" y1="20" x2="26" y2="24"/><line x1="26" y1="20" x2="22" y2="24"/></svg>'
+      },
+      {
+        id: 11,
+        title: 'No Agenda',
+        subtitle: 'A meditation for the meeting that could be anything',
+        duration: '2:15',
+        voice: 'https://storage.googleapis.com/sigh-audio/session-11.mp3',
+        shareQuote: 'No one knows why they\u2019re here. This is the nature of the modern meeting. It exists not because it needs to, but because someone felt the impulse to align.',
+        icon: '<svg viewBox="0 0 40 40" fill="none" stroke="var(--accent-lavender)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="24" height="32" rx="2"/><line x1="14" y1="12" x2="26" y2="12" opacity="0.3"/><line x1="14" y1="18" x2="26" y2="18" opacity="0.3"/><line x1="14" y1="24" x2="22" y2="24" opacity="0.3"/><text x="20" y="22" text-anchor="middle" font-family="var(--font)" font-size="22" font-weight="300" fill="var(--accent-lavender)" stroke="none">?</text></svg>'
+      },
+      {
+        id: 12,
+        title: 'Incoming Call',
+        subtitle: 'A breathing exercise for the call no one expected',
+        duration: '2:49',
+        voice: 'https://storage.googleapis.com/sigh-audio/session-12.mp3',
+        shareQuote: 'A phone call in 2026 is not a communication method. It is an escalation.',
+        icon: '<svg viewBox="0 0 40 40" fill="none" stroke="var(--accent-lavender)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h16a2 2 0 0 1 2 2v24a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><line x1="18" y1="32" x2="22" y2="32"/><path d="M16 14c0 0 2-3 4-3s4 3 4 3" stroke-width="1.5"/><path d="M14 11c0 0 3-5 6-5s6 5 6 5" stroke-width="1.5" opacity="0.5"/></svg>'
       }
     ];
 
@@ -1318,14 +1348,14 @@
     function renderSessions() {
       const grid = document.getElementById('sessionGrid');
       const comingSoon = [
-        { id: 11, title: '👍', subtitle: 'A meditation for the reply that says everything and nothing' },
-        { id: 12, title: 'Sorry, Just Saw This', subtitle: 'A meditation on the lie we all agree to believe' }
+        { id: 13, title: '👍', subtitle: 'A reflection on the reply that says everything and nothing' },
+        { id: 14, title: 'Sorry, Just Saw This', subtitle: 'A meditation on the lie we all agree to believe' }
       ];
 
       const comingSoonIds = new Set(comingSoon.map(s => s.id));
       const allSlots = [];
       let si = 0;
-      for (let n = 1; n <= 12; n++) {
+      for (let n = 1; n <= 14; n++) {
         if (comingSoonIds.has(n)) {
           allSlots.push({ ...comingSoon.find(s => s.id === n), type: 'coming-soon' });
         } else {
@@ -1355,6 +1385,7 @@
             <div class="session-icon">${s.icon}</div>
             <div class="session-meta">
               <span class="session-number">Session ${s.id}</span>
+              ${[11, 12].includes(s.id) ? '<span class="new-badge">New</span>' : ''}
             </div>
             <div class="session-title">${s.title}</div>
             <div class="session-subtitle">${s.subtitle}</div>
