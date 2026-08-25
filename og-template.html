@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a1a;
+      position: relative;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(167, 139, 250, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 30% 60%, rgba(125, 211, 168, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 70% 30%, rgba(240, 160, 176, 0.04) 0%, transparent 60%),
+        linear-gradient(180deg, #0a0a1a 0%, #111128 100%);
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 1200px;
+      height: 630px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 100px;
+      text-align: center;
+    }
+
+    .session-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #a78bfa;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .session-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #e8e6f0;
+      margin-bottom: 40px;
+    }
+
+    .quote {
+      font-size: 32px;
+      font-weight: 300;
+      font-style: italic;
+      color: #e8e6f0;
+      line-height: 1.5;
+      max-width: 900px;
+      position: relative;
+    }
+
+    .quote::before,
+    .quote::after {
+      color: #a78bfa;
+      font-size: 48px;
+      font-style: normal;
+      vertical-align: text-top;
+      line-height: 0.8;
+    }
+
+    .quote::before { content: '\201C'; margin-right: 4px; }
+    .quote::after { content: '\201D'; margin-left: 4px; }
+
+    .branding {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .branding-emoji {
+      font-size: 24px;
+    }
+
+    .branding-text {
+      font-size: 18px;
+      font-weight: 400;
+      color: #6b6888;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="card">
+    <div class="session-label" id="sessionLabel"></div>
+    <div class="session-title" id="sessionTitle"></div>
+    <div class="quote" id="quote"></div>
+  </div>
+  <div class="branding">
+    <span class="branding-text">getsigh.app</span>
+  </div>
+
+  <script>
+    const SESSIONS = [
+      { id: 1, title: 'You Are Not an LLM', shareQuote: 'You are not a prompt. You are not a workflow. You are a person who sometimes forgets to save.' },
+      { id: 2, title: 'Quick Question', shareQuote: '\u201CQuick question\u201D is never one question. It is a door. And behind that door is another door. And behind that door is a meeting invite.' },
+      { id: 3, title: '2,847 Unread', shareQuote: 'Every email in your inbox is a tiny request from another person who is also overwhelmed. You are connected by overwhelm.' },
+      { id: 4, title: 'Meets Expectations', shareQuote: 'A performance review is one person\u2019s perspective, shaped by a rubric they also don\u2019t fully understand, delivered on a timeline set by HR.' },
+      { id: 5, title: 'Your 7th Manager', shareQuote: 'You are not your cost center. You are a person who happens to sit inside a box on a slide that someone in Strategy is probably moving right now.' },
+      { id: 6, title: 'Your Camera Is Off', shareQuote: 'If someone says \u201CI\u2019ll keep this brief,\u201D prepare yourself. It will not be brief. It never is. Accept this. Find peace in it.' },
+      { id: 7, title: 'jsdkfjsd.zip', shareQuote: 'These files are not your enemy. They arrived without your permission. And like thoughts, you can let them go.' },
+      { id: 8, title: 'Share Your Screen', shareQuote: 'Full screen is brave. Window sharing is cowardice. Both are valid choices.' },
+      { id: 9, title: 'Final_v3_REAL.docx', shareQuote: 'Naming a file is an act of acknowledgment. It says: I see you. I know what you are. You matter enough to be found again.' },
+      { id: 10, title: 'No Times Work', shareQuote: 'You are not your calendar. You are a person who exists between the blocks. And that space between is yours.' },
+      { id: 11, title: 'No Agenda', shareQuote: 'This is the nature of the modern meeting. It exists not because it needs to, but because someone felt the impulse to align.' },
+      { id: 12, title: 'Incoming Call', shareQuote: 'This is not normal. People do not call anymore. A phone call in 2026 is not a communication method. It is an escalation.' }
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('home') === '1') {
+      document.querySelector('.card').innerHTML = `
+        <div style="font-size:72px;font-weight:300;letter-spacing:-0.03em;color:#e8e6f0;margin-bottom:12px;">sigh<span style="color:#a78bfa;">.</span></div>
+        <div style="font-size:24px;font-weight:400;color:#9896b0;margin-bottom:20px;">Mindfulness for modern work.</div>
+        <div style="font-size:18px;color:#6b6888;max-width:600px;line-height:1.7;">Guided meditation for All-Hands meetings, performance reviews, and the AI that\u2019s learning your job.</div>
+      `;
+    } else {
+      const sessionId = parseInt(params.get('session') || '1', 10);
+      const session = SESSIONS.find(s => s.id === sessionId) || SESSIONS[0];
+      document.getElementById('sessionLabel').textContent = 'Session ' + session.id;
+      document.getElementById('sessionTitle').textContent = session.title;
+      document.getElementById('quote').textContent = session.shareQuote;
+    }
+  </script>
+</body>
+</html>

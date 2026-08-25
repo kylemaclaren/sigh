@@ -1,8 +1,4 @@
-*.md
 node_modules/
-package.json
 package-lock.json
-og-template.html
-generate-og.js
-*.pdf
-assets/
+.DS_Store
+.claude/
