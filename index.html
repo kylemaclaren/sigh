@@ -169,6 +169,47 @@
       transform: translateY(0);
     }
 
+    /* ── Featured episode ── */
+
+    .episode-banner {
+      max-width: 852px;
+      margin: 0 auto 64px;
+      padding: 30px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      border: 1px solid rgba(125, 211, 168, 0.25);
+      border-radius: var(--radius);
+      background: linear-gradient(120deg, rgba(125, 211, 168, 0.08), rgba(167, 139, 250, 0.04));
+    }
+
+    .episode-eyebrow {
+      color: var(--accent-sage);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .episode-banner h2 { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; }
+    .episode-description { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+    .episode-listen { flex-shrink: 0; background: var(--accent-sage); padding: 13px 22px; }
+    .episode-listen:hover { box-shadow: 0 8px 30px rgba(125, 211, 168, 0.18); }
+    .episode-listen span { font-weight: 400; opacity: 0.7; }
+    .episode-listen:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 5px; }
+
+    @media (max-width: 900px) {
+      .episode-banner { margin-left: 20px; margin-right: 20px; }
+    }
+
+    @media (max-width: 640px) {
+      .episode-banner { margin: 0 16px 48px; padding: 24px; flex-direction: column; align-items: flex-start; gap: 20px; }
+      .episode-banner h2 { font-size: 24px; }
+      .episode-listen { width: 100%; justify-content: center; }
+    }
+
     /* ── Sessions ── */
 
     .sessions {
@@ -780,7 +821,6 @@
     footer {
       text-align: center;
       padding: 60px 24px 40px;
-      border-top: 1px solid var(--border-subtle);
     }
 
     footer p {
@@ -925,6 +965,19 @@
       <button class="cta-button" id="ctaButton">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         Listen Now
+      </button>
+    </section>
+
+    <!-- Featured episode -->
+    <section class="episode-banner" aria-labelledby="featuredTitle">
+      <div>
+        <p class="episode-eyebrow">New episode · Session 13</p>
+        <h2 id="featuredTitle">Reduction in Force</h2>
+        <p class="episode-description">A meditation for an unexpected increase in availability.</p>
+      </div>
+      <button class="cta-button episode-listen" id="featuredPlay" aria-label="Listen to Reduction in Force, 2 minutes 28 seconds">
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Listen <span>2:28</span>
       </button>
     </section>
 
@@ -1135,6 +1188,16 @@
         voice: 'https://storage.googleapis.com/sigh-audio/session-12.mp3',
         shareQuote: 'This is not normal. People do not call anymore. A phone call in 2026 is not a communication method. It is an escalation.',
         icon: '<svg viewBox="0 0 40 40" fill="none" stroke="var(--accent-lavender)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h16a2 2 0 0 1 2 2v24a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><line x1="18" y1="32" x2="22" y2="32"/><path d="M16 14c0 0 2-3 4-3s4 3 4 3" stroke-width="1.5"/><path d="M14 11c0 0 3-5 6-5s6 5 6 5" stroke-width="1.5" opacity="0.5"/></svg>'
+      },
+      {
+        id: 13,
+        title: 'Reduction in Force',
+        subtitle: 'A meditation for an unexpected increase in availability',
+        duration: '2:28',
+        // Finished v2 mix includes the ambient bed, lead-in, tail, and fades.
+        audio: 'https://storage.googleapis.com/sigh-audio/session-13.mp3',
+        shareQuote: 'Your role has been eliminated. Notice that you are still here.',
+        icon: '<svg viewBox="0 0 40 40" fill="none" stroke="var(--accent-sage)" stroke-width="1.5" stroke-linecap="round"><rect x="8" y="8" width="24" height="24" rx="3" stroke-dasharray="3 4"/><path d="M16 20h20m-5-5 5 5-5 5"/></svg>'
       }
     ];
 
@@ -1145,6 +1208,14 @@
     let currentAudio = null;
     let isPlaying = false;
     let currentSession = null;
+    let hasListened = false;
+    let hasCompleted = false;
+
+    function recordListen() {
+      if (!currentSession || hasListened) return;
+      hasListened = true;
+      if (window.goatcounter) goatcounter.count({ path: 'listen/' + currentSession.id, title: currentSession.title, event: true });
+    }
 
     const mixer = {
       audioCtx: null,
@@ -1347,45 +1418,12 @@
 
     function renderSessions() {
       const grid = document.getElementById('sessionGrid');
-      const comingSoon = [
-        { id: 13, title: '👍', subtitle: 'A reflection on the reply that says everything and nothing' },
-        { id: 14, title: 'Sorry, Just Saw This', subtitle: 'A meditation on the lie we all agree to believe' }
-      ];
-
-      const comingSoonIds = new Set(comingSoon.map(s => s.id));
-      const allSlots = [];
-      let si = 0;
-      for (let n = 1; n <= 14; n++) {
-        if (comingSoonIds.has(n)) {
-          allSlots.push({ ...comingSoon.find(s => s.id === n), type: 'coming-soon' });
-        } else {
-          allSlots.push({ ...SESSIONS[si], type: 'playable' });
-          si++;
-        }
-      }
-
-      grid.innerHTML = allSlots.map(s => {
-        if (s.type === 'coming-soon') {
-          return `<div class="session-card coming-soon" aria-label="Session ${s.id}: ${s.title} — Coming Soon">
-            <div class="session-meta">
-              <span class="session-number">Session ${s.id}</span>
-              <span class="coming-soon-badge">Coming Soon</span>
-            </div>
-            <div class="session-title">${s.title}</div>
-            <div class="session-subtitle">${s.subtitle}</div>
-            <div class="session-action">
-              <div class="play-icon">
-                <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
-              </div>
-              <span class="play-label">Coming Soon</span>
-            </div>
-          </div>`;
-        }
+      // The newest episode is featured in the banner above this collection.
+      grid.innerHTML = SESSIONS.filter(s => s.id !== 13).map(s => {
         return `<button class="session-card" data-id="${s.id}" aria-label="Session ${s.id}: ${s.title} — Listen">
             <div class="session-icon">${s.icon}</div>
             <div class="session-meta">
               <span class="session-number">Session ${s.id}</span>
-              ${[11, 12].includes(s.id) ? '<span class="new-badge">New</span>' : ''}
             </div>
             <div class="session-title">${s.title}</div>
             <div class="session-subtitle">${s.subtitle}</div>
@@ -1410,6 +1448,8 @@
 
     function openPlayer(session, autoPlay = true) {
       currentSession = session;
+      hasListened = false;
+      hasCompleted = false;
       if (window.goatcounter) goatcounter.count({ path: 'play/' + session.id, title: session.title, event: true });
       history.replaceState(null, '', '#session-' + session.id);
       const overlay = document.getElementById('playerOverlay');
@@ -1441,6 +1481,7 @@
           document.getElementById('timeCurrent').textContent = formatTime(t);
         };
         mixer.onComplete = () => {
+          hasCompleted = true;
           isPlaying = false;
           playBtn.innerHTML = playSvg;
           mixer.stop();
@@ -1453,6 +1494,7 @@
           playBtn.disabled = true;
 
           mixer.start(session.voice).then((totalDuration) => {
+            recordListen();
             document.getElementById('timeDuration').textContent = formatTime(totalDuration);
             playBtn.innerHTML = pauseSvg;
             playBtn.disabled = false;
@@ -1466,6 +1508,7 @@
         }
       } else {
         currentAudio = new Audio(session.audio);
+        currentAudio.addEventListener('playing', recordListen);
 
         currentAudio.addEventListener('loadedmetadata', () => {
           document.getElementById('timeDuration').textContent = formatTime(currentAudio.duration);
@@ -1480,6 +1523,7 @@
         });
 
         currentAudio.addEventListener('ended', () => {
+          hasCompleted = true;
           isPlaying = false;
           playBtn.innerHTML = playSvg;
           if (window.goatcounter) goatcounter.count({ path: 'complete/' + session.id, title: session.title, event: true });
@@ -1490,7 +1534,7 @@
           showToast('Audio not yet available. Check back soon — or just breathe.');
         });
 
-        currentAudio.play().then(() => {
+        if (autoPlay) currentAudio.play().then(() => {
           playBtn.innerHTML = pauseSvg;
           isPlaying = true;
         }).catch(() => {
@@ -1501,7 +1545,7 @@
     }
 
     function closePlayer() {
-      if (window.goatcounter && currentSession && isPlaying) {
+      if (window.goatcounter && currentSession && hasListened && !hasCompleted) {
         const cur = mixer.active ? mixer.getCurrentTime() : (currentAudio ? currentAudio.currentTime : 0);
         const tot = mixer.active ? mixer.getTotalDuration() : (currentAudio ? currentAudio.duration : 1);
         const pct = Math.round((cur / tot) * 100);
@@ -1519,6 +1563,7 @@
         currentAudio = null;
       }
       isPlaying = false;
+      currentSession = null;
     }
 
     function togglePlay() {
@@ -1528,6 +1573,7 @@
         playBtn.innerHTML = loadingSvg;
         playBtn.disabled = true;
         mixer.start(currentSession.voice).then((totalDuration) => {
+          recordListen();
           document.getElementById('timeDuration').textContent = formatTime(totalDuration);
           playBtn.innerHTML = pauseSvg;
           playBtn.disabled = false;
@@ -1559,11 +1605,14 @@
         playBtn.innerHTML = playSvg;
         isPlaying = false;
       } else {
-        currentAudio.play().catch(() => {
+        currentAudio.play().then(() => {
+          playBtn.innerHTML = pauseSvg;
+          isPlaying = true;
+        }).catch(() => {
+          playBtn.innerHTML = playSvg;
+          isPlaying = false;
           showToast('Audio not yet available. Check back soon — or just breathe.');
         });
-        playBtn.innerHTML = pauseSvg;
-        isPlaying = true;
       }
     }
 
@@ -1616,7 +1665,7 @@
       if (!currentSession) return;
       if (window.goatcounter) goatcounter.count({ path: 'share/' + currentSession.id, title: currentSession.title, event: true });
       const shareText = `"${currentSession.shareQuote}"`;
-      const shareUrl = 'https://getsigh.app/s/' + currentSession.id + '/';
+      const shareUrl = window.location.origin + '/s/' + currentSession.id + '/';
       const shareTitle = `${currentSession.title} — Sigh`;
 
       if (navigator.share) {
@@ -1640,6 +1689,10 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closePlayer();
+    });
+
+    document.getElementById('featuredPlay').addEventListener('click', () => {
+      openPlayer(SESSIONS.find(s => s.id === 13));
     });
 
     // CTA scroll

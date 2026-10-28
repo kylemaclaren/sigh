@@ -15,7 +15,7 @@ const fs = require('fs');
     deviceScaleFactor: 1
   });
 
-  for (let i = 1; i <= 12; i++) {
+  for (let i = 1; i <= 13; i++) {
     const page = await context.newPage();
     await page.goto(`${templateUrl}?session=${i}`, { waitUntil: 'networkidle' });
     await page.waitForTimeout(500);
