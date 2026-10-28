@@ -171,6 +171,17 @@
 
     /* ── Featured episode ── */
 
+    /* Restore the main CTA automatically when the featured banner is removed or hidden. */
+    .content-wrapper:has(.episode-banner:not([hidden])) #ctaButton {
+      display: none;
+    }
+
+    .content-wrapper:has(.episode-banner:not([hidden])) .hero-sub {
+      margin-bottom: 0;
+    }
+
+    .episode-banner[hidden] { display: none; }
+
     .episode-banner {
       max-width: 852px;
       margin: 0 auto 64px;
@@ -1691,7 +1702,7 @@
       if (e.key === 'Escape') closePlayer();
     });
 
-    document.getElementById('featuredPlay').addEventListener('click', () => {
+    document.getElementById('featuredPlay')?.addEventListener('click', () => {
       openPlayer(SESSIONS.find(s => s.id === 13));
     });
 
